@@ -7,4 +7,7 @@
 
 function [bTi] = GetTransformationWrtBase(biTei, linkNumber)
 %TODO
+bTi = biTei(:,:,1)* biTei(:,:,2);
+for i=3:1:linkNumber
+    bTi = bTi* biTei(:,:,i);
 end

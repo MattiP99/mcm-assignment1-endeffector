@@ -9,4 +9,11 @@
 
 function [iTj]=GetFrameWrtFrame(linkNumber_i, linkNumber_j,biTei)
 %TODO
+    T_i = GetTransormationWrtBase(biTei(4,4,linkNumber_i));
+    T_j = GetTransormationWrtBase(biTei(4,4,linkNumber_j));
+   for i=1:1:7
+       iTj = inv(T_i)*T_j;
+   end
+   
+   
 end

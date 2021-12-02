@@ -9,4 +9,5 @@
 
 function [r]=GetBasicVectorWrtBase(biTei, linkNumber)
 %TODO
+    r = biTei(1:3,4,linkNumber);
 end
