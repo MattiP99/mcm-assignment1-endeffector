@@ -9,5 +9,8 @@
 
 function [r]=GetBasicVectorWrtBase(biTei, linkNumber)
 %TODO
-    r = biTei(1:3,4,linkNumber);
+% deve usare la matrice GetTransformationWrtBase
+    T0i = GetTransformationWrtBase(biTei,linkNumber);
+    r = T0i(1:3,4);
+     
 end

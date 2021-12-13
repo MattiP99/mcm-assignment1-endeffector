@@ -9,9 +9,11 @@
 % size of biTei is equal to (4,4,numberOfLinks).
 
 function [biTei] = GetDirectGeometry(q, biTri, linkType)
-    numberOfLinks = 7;
+
+    numberOfLinks = 9;
     biTei = zeros(4,4,numberOfLinks);
     for i=1:1:numberOfLinks
-        biTei(:,:,i) = DirectGeometry(q(i),biTri(i),linkType(i));
+            biTei(:,:,i) = DirectGeometry(q(i),biTri(:,:,i),linkType(i));
+          
     end
 end

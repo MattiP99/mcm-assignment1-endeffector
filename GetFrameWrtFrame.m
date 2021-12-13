@@ -8,11 +8,13 @@
 % described in biTei.
 
 function [iTj]=GetFrameWrtFrame(linkNumber_i, linkNumber_j,biTei)
-%TODO
+%Having T_i (Transformation matrix from <0> to <i_th>)and
+%T_j(Transformation matrix from <0> to <j_th>) I can compute iTj simply
+%multiplying the inverse of T_i for T_j
     T_i = GetTransormationWrtBase(biTei(4,4,linkNumber_i));
     T_j = GetTransormationWrtBase(biTei(4,4,linkNumber_j));
-   for i=1:1:7
-       iTj = inv(T_i)*T_j;
+   for i=1:1:9
+       iTj = T_i/T_j; %equal to inv(T_i) * T_j
    end
    
    
