@@ -10,7 +10,7 @@
 
 function [biTei] = GetDirectGeometry(q, biTri, linkType)
 
-    numberOfLinks = 8;
+    numberOfLinks = 9;
     biTei = zeros(4,4,numberOfLinks);
     for i=1:1:numberOfLinks
             biTei(:,:,i) = DirectGeometry(q(i),biTri(:,:,i),linkType(i));

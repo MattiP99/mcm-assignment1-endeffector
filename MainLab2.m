@@ -59,10 +59,10 @@ biTri(4,1,9) = 0; biTri(4,2,9) = 0;  biTri(4,3,9) = 0; biTri(4,4,9) = 1;
 
 %4-th and 9-th joints are fixed, their aim is only for connection
 jointType = [0,0,0,2,0,0,0,0,2];
-numberOfJoints = 8;
+numberOfJoints = 9;
 
-qmin = -pi * ones(8,1);
-qmax = +pi * ones(8,1);
+qmin = -pi * ones(9,1);
+qmax = +pi * ones(9,1);
 
 %initial configuration
 q = [0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1];
