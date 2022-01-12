@@ -1,8 +1,14 @@
-%%MOCOM LAB1
 
+
+%%MOCOM LAB1
+%This is the Main to Run. If the connection of the additional links is not
+%good, there is the other main function. Some changes are needed too but
+%only numerical
 clc
 clear
 close all
+
+addpath('include')
 
 biTri(1,1,1) = 1; biTri(1,2,1) = 0; biTri(1,3,1) = 0; biTri(1,4,1) = 0;
 biTri(2,1,1) = 0; biTri(2,2,1) = 1; biTri(2,3,1) = 0; biTri(2,4,1) = 0;
@@ -19,6 +25,7 @@ biTri(2,1,3) = -1; biTri(2,2,3) = 0; biTri(2,3,3) = 0;  biTri(2,4,3) = 0;
 biTri(3,1,3) = 0;  biTri(3,2,3) = -1; biTri(3,3,3) = 0; biTri(3,4,3) = 0;
 biTri(4,1,3) = 0;  biTri(4,2,3) = 0; biTri(4,3,3) = 0;  biTri(4,4,3) = 1;
 
+%Fixed joint only for connection
 biTri(1,1,4) = 1;  biTri(1,2,4) = 0; biTri(1,3,4) = 0;  biTri(1,4,4) = 0;
 biTri(2,1,4) = 0; biTri(2,2,4) = 1; biTri(2,3,4) = 0;  biTri(2,4,4) = 0;
 biTri(3,1,4) = 0;  biTri(3,2,4) = 0; biTri(3,3,4) = 1; biTri(3,4,4) = 0.3265;
@@ -50,60 +57,102 @@ biTri(2,1,9) = 0; biTri(2,2,9) = 1; biTri(2,3,9) = 0; biTri(2,4,9) = 0;
 biTri(3,1,9) = 0; biTri(3,2,9) = 0;  biTri(3,3,9) = 1; biTri(3,4,9) = 0.021;
 biTri(4,1,9) = 0; biTri(4,2,9) = 0;  biTri(4,3,9) = 0; biTri(4,4,9) = 1;
 
-
-
-
-%-------------------MOVE----------------------%
-
-numberoflinks = 9;
 %4-th and 9-th joints are fixed, their aim is only for connection
-linkType = [0,0,0,2,0,0,0,0,2];
+jointType = [0,0,0,2,0,0,0,0,2];
+numberOfJoints = 8;
 
-% the vector of angles that I want to give to each joint
-%I gave a negative angle to the 5-th (4-th in the model) because I didn't
-%want it to go down making a bad and unfeasible motion
-conf_i = [0,0,0,0,0,0,0,0,0,0];
-conf_f = [1.5,1.5,1.5,0,-1.5,1.5,1.5,1.5,0];
+qmin = -pi * ones(8,1);
+qmax = +pi * ones(8,1);
 
+%initial configuration
+q = [0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1];
+q_dot = [0,0,0,0,0,0,0,0];
 
-nSteps = 150;
-qSteps = [linspace(conf_i(1),conf_f(1),nSteps).', linspace(conf_i(2),conf_f(2),nSteps).',linspace(conf_i(3),conf_f(3),nSteps).',linspace(conf_i(4),conf_f(4),nSteps).',linspace(conf_i(5),conf_f(5),nSteps).',linspace(conf_i(6),conf_f(6),nSteps).',linspace(conf_i(7),conf_f(7),nSteps).',linspace(conf_i(8),conf_f(8),nSteps).',linspace(conf_i(9),conf_f(9),nSteps).']; 
-qSteps 
+%goal definition
+questions = {'What is X coordinates of the goal?',...
+              'What is Y coordinates of the goal?',...
+              'What is Z coordinates of the goal?'};
+answer = inputdlg(questions);
     
+goalCoord_X = str2double(answer{1});
+goalCoord_Y = str2double(answer{2});
+goalCoord_Z = str2double(answer{3});
 
+
+%goal orientation
+goalMatrix = [1,0,0,goalCoord_X;
+              0,1,0,goalCoord_Y;
+              0,0,1,goalCoord_Z;
+              0,0,0,1.0];
+
+% simulation variables 
+ts = 0.1;
+t_start = 0.0;
+t_end = 10.0;
+t = t_start:ts:t_end;
+
+ 
+angular_gain = 0.1;
+linear_gain = 0.8;
+
+%preallocation of variables
+x_dot = zeros(6,1);
+error_linear = zeros(3,1);
+error_angular = zeros(3,1);
+
+
+bTi = zeros(4,4,numberOfJoints);
+brij = zeros(3, numberOfJoints +1);
+
+
+hold on
 cindex = 1;
-csize = nSteps;
+csize = t_end/ts;
 cmap = colormap(summer(csize));
 color = cmap(mod(cindex,csize)+1,:);
 plot3(0,0,0,'o','Color','r')
-
-
+plot3(goalCoord_X, goalCoord_Y,goalCoord_Z,'o','Color','r');
 % For each interval from initial configuration to the final configuration
-% we will compute 
-for i =1:nSteps
-    basicV = zeros(3,numberoflinks);
-    %qSteps has 150 rows (bacause of the steps) and 7 columns
-    % At each step I will compute 7 measures that corrispond to the angles the
-    % joints are moved.
-    % Theese angles, or better intermediate configurations are determined by the GetDirectGeometry function
-    q = qSteps(i,1:numberoflinks).';
-    biTei = GetDirectGeometry(q,biTri,linkType);
+% we will compute
+
+
+%%%%%%% Kinematic Simulation %%%%%%%
+
+  
+    % simulating the robot
+for i = t
+    basicV = zeros(3,numberOfJoints);
+
+    %transformation matrices of link <i> w.r.t. link <i-1>
+    biTei = GetDirectGeometry(q,biTri,jointType);
     
-    
+    % transformation matrix from the manipulator base to the ith joint in the configuration identified by biTei.
+    bTe = GetTransformationWrtBase(biTei,9);
+    %Jacobian Matrix
+    J = GetJacobian(biTei,bTe,jointType);
+
+
+    error_linear= goalMatrix(1:3,4) - bTe(1:3,4);
+    error_angular = VersorLemma(bTe(1:3,1:3), goalMatrix(1:3,1:3));
+
+    x_dot(1:3,1) = angular_gain*error_angular;
+    x_dot(4:6,1) = linear_gain*error_linear;
+
+    q_dot = pinv(J)*x_dot;
+    q = KinematicSimulation(q, q_dot,ts, qmin, qmax);
+
     %computing all vectors connecting the base to the i-th link i
     for j = 1:numberoflinks
-        basicV(:,j) = GetBasicVectorWrtBase(biTei,j);
+        basicV(:,j) = GetBasicVectorWrtBase(biTei,j)
     end
-    
+
     % plot the base separatly because it is useless plotting it everytime.
-    basicV = [[0;0;0],basicV]
+    basicV = [[0;0;0],basicV];
     
-    %starting from 2... link 1 is moved because of the position of the base
-    %At each step I will plot x,y,z of each joint
-   for j = 2:numberoflinks + 1   
+    for j = 2:numberoflinks + 1   
         plot3(basicV(1,j),basicV(2,j),basicV(3,j),'o','Color','b')
     end
-    
+
     color = cmap(mod(cindex,csize)+1, :);
     cindex = cindex +1;
     
@@ -111,6 +160,11 @@ for i =1:nSteps
     hold on
     line(basicV(1,:),basicV(2,:),basicV(3,:), 'LineWidth', 2,'Color',color)
 
-    pause(0.1)
+    pause(0.1);
 
 end
+
+    
+  
+
+

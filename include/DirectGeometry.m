@@ -12,7 +12,7 @@ function biTei = DirectGeometry(qi, biTri, linkType)
     %compute the rotation around z-axis
    if linkType == 0
        biTei = biTri * [cos(qi), -sin(qi),   0, 0;
-                        sin(qi), cos(qi),   0, 0;
+                        sin(qi), cos(qi),    0, 0;
                          0,       0,         1, 0;
                          0,       0,         0, 1 ] ;
     % if the joint type is prismatic
