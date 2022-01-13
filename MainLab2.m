@@ -88,7 +88,7 @@ goalMatrix = [1,0,0,goalCoord_X;
 % simulation variables 
 ts = 0.1;
 t_start = 0.0;
-t_end = 10.0;
+t_end = 15.0;
 t = t_start:ts:t_end;
 
  
@@ -140,7 +140,8 @@ for i = t
 
     q_dot = pinv(J)*x_dot;
     q = KinematicSimulation(q, q_dot,ts, qmin, qmax);
-
+    
+    
     %computing all vectors connecting the base to the i-th link i
     for j = 1:numberOfJoints
         basicV(:,j) = GetBasicVectorWrtBase(biTei,j)
