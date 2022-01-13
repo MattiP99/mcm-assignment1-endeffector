@@ -22,7 +22,7 @@ function c = VersorLemma(r1, r2)
     errorThresh = 10^-4;
   
     cosTeta = cos((dot(i1,i2) + dot(j1,j2) + dot(k1,k2) -1 )/2);
-    sinTeta = norm(((i1*i2) + (j1*j2) + (k1*k2))/2);
+    sinTeta = norm((cross(i1,i2) + cross(j1,j2) + cross(k1,k2))/2);
     
     
     if cosTeta >= 1 - errorThresh
@@ -32,7 +32,7 @@ function c = VersorLemma(r1, r2)
     
     elseif abs(cosTeta) < 1- errorThresh
         teta = atan2(sinTeta,cosTeta);
-        c = ((i1*i2) + (j1*j2) + (k1*k2)/2);
+        c = (cross(i1,i2) + cross(j1,j2) + cross(k1,k2)/2);
      
     %Almost -1
     else 

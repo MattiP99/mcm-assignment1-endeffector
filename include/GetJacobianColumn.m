@@ -27,7 +27,7 @@ function [h] = GetJacobianColumn(biTei, bTe, jointType,linkNumber)
     if jointType == 0
         
             h(1:3,1) = ki;
-            h(4:6,1) = ki'*rei;
+            h(4:6,1) = cross(ki,rei);
         
     elseif jointType == 1
         

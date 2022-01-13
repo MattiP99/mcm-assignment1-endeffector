@@ -65,8 +65,8 @@ qmin = -pi * ones(9,1);
 qmax = +pi * ones(9,1);
 
 %initial configuration
-q = [0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1];
-q_dot = [0,0,0,0,0,0,0,0];
+q = [0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1];
+q_dot = [0,0,0,0,0,0,0,0,0];
 
 %goal definition
 questions = {'What is X coordinates of the goal?',...
@@ -142,14 +142,14 @@ for i = t
     q = KinematicSimulation(q, q_dot,ts, qmin, qmax);
 
     %computing all vectors connecting the base to the i-th link i
-    for j = 1:numberoflinks
+    for j = 1:numberOfJoints
         basicV(:,j) = GetBasicVectorWrtBase(biTei,j)
     end
 
     % plot the base separatly because it is useless plotting it everytime.
     basicV = [[0;0;0],basicV];
     
-    for j = 2:numberoflinks + 1   
+    for j = 2:numberOfJoints + 1   
         plot3(basicV(1,j),basicV(2,j),basicV(3,j),'o','Color','b')
     end
 

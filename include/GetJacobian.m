@@ -16,8 +16,8 @@ function J = GetJacobian(biTei, bTe, jointType)
 %% TODO
     J = zeros(6,length(jointType));
     for i = 1:length(jointType)
-        bTi = GetTransformationWrtBase(biTei,i);
-        J(:,i) = GetJacobianColumn(bTi,bTe,jointType(i),i);
+        
+        J(:,i) = GetJacobianColumn(biTei,bTe,jointType(i),i);
 
     end
 end
