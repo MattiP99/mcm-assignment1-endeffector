@@ -17,29 +17,32 @@ function c = VersorLemma(r1, r2)
    
     
     double cosTeta;
-    double sinTeta;
+    double v_sinTeta;
     double teta;
+    double v;
     errorThresh = 10^-4;
   
     cosTeta = cos((dot(i1,i2) + dot(j1,j2) + dot(k1,k2) -1 )/2);
-    sinTeta = norm((cross(i1,i2) + cross(j1,j2) + cross(k1,k2))/2);
     
     
     if cosTeta >= 1 - errorThresh
-        teta = 2*pi;
+        teta = 0;
+        v = [0,0,0];
         % it can be whatever 
-        c= [1;1;1]; 
+        c= v*teta; 
     
     elseif abs(cosTeta) < 1- errorThresh
-        teta = atan2(sinTeta,cosTeta);
-        c = (cross(i1,i2) + cross(j1,j2) + cross(k1,k2)/2);
-     
+        teta = acos(cosTeta);
+        v_sinTeta = norm((cross(i1,i2) + cross(j1,j2) + cross(k1,k2))/2);
+        v = v_sinTeta/abs(v_sinTeta);
+        c = v*teta;
     %Almost -1
     else 
-        teta = 0;
+        teta = pi;
         sumComponents = (i1+i2)+(j1+j2)+(k1+k2);
         norm_sumComponents = norm(sumComponents);
-        c = (sumComponents/norm_sumComponents);
+        v = (sumComponents/norm_sumComponents);
+        c = v*teta;
         
    
     end

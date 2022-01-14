@@ -41,20 +41,20 @@ biTri(2,1,6) = 0; biTri(2,2,6) = -1; biTri(2,3,6) = 0; biTri(2,4,6) = 0;
 biTri(3,1,6) = 1; biTri(3,2,6) = 0;  biTri(3,3,6) = 0; biTri(3,4,6) = 0;
 biTri(4,1,6) = 0; biTri(4,2,6) = 0;  biTri(4,3,6) = 0; biTri(4,4,6) = 1;
 
-biTri(1,1,7) = 0; biTri(1,2,7) = 0;  biTri(1,3,7) = 1; biTri(1,4,7) = 0;
+biTri(1,1,7) = 0; biTri(1,2,7) = 0;  biTri(1,3,7) = -1; biTri(1,4,7) = 0;
 biTri(2,1,7) = 0; biTri(2,2,7) = -1; biTri(2,3,7) = 0; biTri(2,4,7) = 0;
-biTri(3,1,7) = 1; biTri(3,2,7) = 0;  biTri(3,3,7) = 0; biTri(3,4,7) = 0.325;
+biTri(3,1,7) = -1; biTri(3,2,7) = 0;  biTri(3,3,7) = 0; biTri(3,4,7) = 0.325;
 biTri(4,1,7) = 0; biTri(4,2,7) = 0;  biTri(4,3,7) = 0; biTri(4,4,7) = 1;
 
-biTri(1,1,8) = 0; biTri(1,2,8) = 0;  biTri(1,3,8) = 1; biTri(1,4,8) = 0.132;
+biTri(1,1,8) = 0; biTri(1,2,8) = 0;  biTri(1,3,8) = -1; biTri(1,4,8) = -0.132;
 biTri(2,1,8) = 0; biTri(2,2,8) = -1; biTri(2,3,8) = 0; biTri(2,4,8) = 0;
-biTri(3,1,8) = 1; biTri(3,2,8) = 0;  biTri(3,3,8) = 0; biTri(3,4,8) = 0;
+biTri(3,1,8) = -1; biTri(3,2,8) = 0;  biTri(3,3,8) = 0; biTri(3,4,8) = 0;
 biTri(4,1,8) = 0; biTri(4,2,8) = 0;  biTri(4,3,8) = 0; biTri(4,4,8) = 1;
 
 %The last fixed part
-biTri(1,1,9) = 1; biTri(1,2,9) = 0;  biTri(1,3,9) = 0; biTri(1,4,9) = 0;
+biTri(1,1,9) = 0; biTri(1,2,9) = 0;  biTri(1,3,9) = 1; biTri(1,4,9) = 0;
 biTri(2,1,9) = 0; biTri(2,2,9) = 1; biTri(2,3,9) = 0; biTri(2,4,9) = 0;
-biTri(3,1,9) = 0; biTri(3,2,9) = 0;  biTri(3,3,9) = 1; biTri(3,4,9) = 0.021;
+biTri(3,1,9) = 1; biTri(3,2,9) = 0;  biTri(3,3,9) = 0; biTri(3,4,9) = -0.021;
 biTri(4,1,9) = 0; biTri(4,2,9) = 0;  biTri(4,3,9) = 0; biTri(4,4,9) = 1;
 
 %4-th and 9-th joints are fixed, their aim is only for connection
@@ -141,6 +141,11 @@ for i = t
     q_dot = pinv(J)*x_dot;
     q = KinematicSimulation(q, q_dot,ts, qmin, qmax);
     
+    %parametric equations for a straight line 
+    %from end effector zero position to goal point
+    %x = ((velocity*(x2-x1))/square((x2-x1)^2 + (y2-y1)^2)) * t + x1;
+    %y = ((velocity*(y2-y1))/square((x2-x1)^2 + (y2-y1)^2)) * t + y1;
+    %z = ((velocity*(z2-z1))/square((x2-x1)^2 + (y2-y1)^2)) * t + z1;
     
     %computing all vectors connecting the base to the i-th link i
     for j = 1:numberOfJoints

@@ -16,7 +16,6 @@ function J = GetJacobian(biTei, bTe, jointType)
 %% TODO
     J = zeros(6,length(jointType));
     for i = 1:length(jointType)
-        
         J(:,i) = GetJacobianColumn(biTei,bTe,jointType(i),i);
 
     end
