@@ -1,9 +1,7 @@
 
 
-%%MOCOM LAB1
-%This is the Main to Run. If the connection of the additional links is not
-%good, there is the other main function. Some changes are needed too but
-%only numerical
+%%MOCOM LAB2
+
 clc
 clear
 close all
@@ -61,14 +59,18 @@ biTri(4,1,9) = 0; biTri(4,2,9) = 0;  biTri(4,3,9) = 0; biTri(4,4,9) = 1;
 jointType = [0,0,0,2,0,0,0,0,2];
 numberOfJoints = 9;
 
+%Declaring minimum and maximum q for each joint
 qmin = -pi * ones(9,1);
 qmax = +pi * ones(9,1);
 
 %initial configuration
 q = [0.1,0.1,0.1,0,0.1,0.1,0.1,0.1,0];
 q_dot = [0,0,0,0,0,0,0,0,0];
+
+%My Basic Jacombian
 J = zeros(6,9);
-%goal definition
+
+%GOAL DEFINITION AS AN INPUT
 questions = {'What is X coordinates of the goal?',...
               'What is Y coordinates of the goal?',...
               'What is Z coordinates of the goal?'}
@@ -79,7 +81,7 @@ goalCoord_Y = str2double(answer{2});
 goalCoord_Z = str2double(answer{3});
 
 
-%goal orientation
+%goal orientation and position
 goalMatrix = [1,0,0,goalCoord_X;
               0,1,0,goalCoord_Y;
               0,0,1,goalCoord_Z;
@@ -91,7 +93,7 @@ t_start = 0.0;
 t_end = 15.0;
 t = t_start:ts:t_end;
 
- 
+%errors for linear and angular part
 angular_gain = 0.1;
 linear_gain = 0.8;
 
@@ -123,29 +125,29 @@ plot3(goalCoord_X, goalCoord_Y,goalCoord_Z,'o','Color','r');
 for i = t
     basicV = zeros(3,numberOfJoints);
 
-    %transformation matrices of link <i> w.r.t. link <i-1>
+    %vector of transformation matrices of link <i> w.r.t. link <i-1>
     biTei = GetDirectGeometry(q,biTri,jointType);
     
-    % transformation matrix from the manipulator base to the ith joint in the configuration identified by biTei.
+    % transformation matrix from the end effector to the base (taken the 9 th from vector of matrices biTei)
     bTe = GetTransformationWrtBase(biTei,9);
+   
     %Jacobian Matrix
     J = GetJacobian(biTei,bTe,jointType);
 
 
     error_linear= goalMatrix(1:3,4) - bTe(1:3,4);
     error_angular = VersorLemma(bTe(1:3,1:3), goalMatrix(1:3,1:3));
-
+    
+    % Angular and Linear Velocity that the end effector shoul have in order
+    % to reach the target position
     x_dot(1:3,1) = angular_gain*error_angular;
     x_dot(4:6,1) = linear_gain*error_linear;
-
+    
+    %Angular and Linear Velocity that each joint should have for letting the end effector reach to goal 
     q_dot = pinv(J)*x_dot;
     q = KinematicSimulation(q, q_dot,ts, qmin, qmax);
     
-    %parametric equations for a straight line 
-    %from end effector zero position to goal point
-    %x = ((velocity*(x2-x1))/square((x2-x1)^2 + (y2-y1)^2)) * t + x1;
-    %y = ((velocity*(y2-y1))/square((x2-x1)^2 + (y2-y1)^2)) * t + y1;
-    %z = ((velocity*(z2-z1))/square((x2-x1)^2 + (y2-y1)^2)) * t + z1;
+    
     
     %computing all vectors connecting the base to the i-th link i
     for j = 1:numberOfJoints
@@ -173,12 +175,15 @@ for i = t
 
     pause(0.1);
     
+    %Termination conditions
+    %If the e.e is not close enough simulation should continue
     if  norm(goalMatrix(1:3,4)' - bTe(1:3,4)') > 0.03
         continue
-    
+    %If the simulation is taking too much time the goal is not reachable
     elseif  i== 15.0
         error = msgbox('Your Target is not reachable');
         break
+    %If the e.e is close enough
     else 
         done = msgbox('Your Target has been reached');
         break

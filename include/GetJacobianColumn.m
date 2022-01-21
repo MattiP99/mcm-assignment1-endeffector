@@ -12,7 +12,7 @@
 % - h: Jacobian column h(1:3) angular part, h(4:6) linear
 
 function [h] = GetJacobianColumn(biTei, bTe, jointType)
-    %% TODO
+    % TODO
     %ki = zeros(3,1);
     h = zeros(6,1);
     %rei = zeros(3,1);
@@ -24,22 +24,21 @@ function [h] = GetJacobianColumn(biTei, bTe, jointType)
     r = rei - ri;
     ki = biTei(1:3,3);
      
-    
+    %Rotational joints
     if jointType == 0
             h(1:3,1) = ki;
             h(4:6,1) = cross(ki,r);
-        
+    
+    %Prismatic joints
     elseif jointType == 1
         
             h(1:3,1) = nullVector;
             h(4:6,1) = ki;
+    %Fixed joints (used only for connection)
     elseif jointType == 2
 
             h(1:3,1) = nullVector;
             h(4:6,1) = nullVector;
-
-            
-
     end
 
   end
