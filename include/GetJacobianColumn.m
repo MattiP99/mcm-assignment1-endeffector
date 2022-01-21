@@ -11,22 +11,23 @@
 % Output
 % - h: Jacobian column h(1:3) angular part, h(4:6) linear
 
-function [h] = GetJacobianColumn(biTei, bTe, jointType,linkNumber)
+function [h] = GetJacobianColumn(biTei, bTe, jointType)
     %% TODO
-    ki = zeros(3,1);
+    %ki = zeros(3,1);
     h = zeros(6,1);
-    rei = zeros(3,1);
+    %rei = zeros(3,1);
     nullVector = zeros(3,1);
-    ri= GetBasicVectorWrtBase(biTei, linkNumber);
+    ri= biTei(1:3,4);
+    rei = bTe(1:3,4);
 
 
-    rei = bTe(1:3, 4) - ri;
+    r = rei - ri;
     ki = biTei(1:3,3);
      
     
     if jointType == 0
             h(1:3,1) = ki;
-            h(4:6,1) = cross(ki,rei);
+            h(4:6,1) = cross(ki,r);
         
     elseif jointType == 1
         

@@ -16,7 +16,12 @@ function J = GetJacobian(biTei, bTe, jointType)
 %% TODO
     J = zeros(6,length(jointType));
     for i = 1:length(jointType)
-        J(:,i) = GetJacobianColumn(biTei,bTe,jointType(i),i);
+        %Take the single tranformation matrix T w.r.t the base for joint
+        %and pass it to get jacobiancolumn
+        % Note that bTe is already a single matrix because it is the one
+        % from the base to the end effector computed as bTe = GetTransformationWrtBase(biTei,9);
+        bTi = GetTransformationWrtBase(biTei,i);
+        J(:,i) = GetJacobianColumn(bTi,bTe,jointType(i));
 
     end
 end

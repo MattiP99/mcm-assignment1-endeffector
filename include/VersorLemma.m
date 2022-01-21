@@ -32,8 +32,10 @@ function c = VersorLemma(r1, r2)
         c= v*teta; 
     
     elseif abs(cosTeta) < 1- errorThresh
-        teta = acos(cosTeta);
+       
         v_sinTeta = norm((cross(i1,i2) + cross(j1,j2) + cross(k1,k2))/2);
+        sinTeta = sin(angle(v_sinTeta));
+        teta = atan2(sinTeta, cosTeta);
         v = v_sinTeta/abs(v_sinTeta);
         c = v*teta;
     %Almost -1

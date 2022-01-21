@@ -65,14 +65,14 @@ qmin = -pi * ones(9,1);
 qmax = +pi * ones(9,1);
 
 %initial configuration
-q = [0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1];
+q = [0.1,0.1,0.1,0,0.1,0.1,0.1,0.1,0];
 q_dot = [0,0,0,0,0,0,0,0,0];
-
+J = zeros(6,9);
 %goal definition
 questions = {'What is X coordinates of the goal?',...
               'What is Y coordinates of the goal?',...
-              'What is Z coordinates of the goal?'};
-answer = inputdlg(questions);
+              'What is Z coordinates of the goal?'}
+answer = inputdlg(questions)
     
 goalCoord_X = str2double(answer{1});
 goalCoord_Y = str2double(answer{2});
@@ -155,11 +155,16 @@ for i = t
     % plot the base separatly because it is useless plotting it everytime.
     basicV = [[0;0;0],basicV];
     
-    for j = 2:numberOfJoints + 1   
+    for j = 2:numberOfJoints + 1  
         plot3(basicV(1,j),basicV(2,j),basicV(3,j),'o','Color','b')
+        xlabel('X');
+        ylabel('Y');
+        zlabel('Z');
+        zoom(0.7);
+        view(45,25);
     end
 
-    color = cmap(mod(cindex,csize)+1, :);
+    color = cmap(mod(cindex,csize)+1,:);
     cindex = cindex +1;
     
     %Connecting all joints while moving by using color lines
@@ -167,7 +172,17 @@ for i = t
     line(basicV(1,:),basicV(2,:),basicV(3,:), 'LineWidth', 2,'Color',color)
 
     pause(0.1);
-
+    
+    if  norm(goalMatrix(1:3,4)' - bTe(1:3,4)') > 0.03
+        continue
+    
+    elseif  i== 15.0
+        error = msgbox('Your Target is not reachable');
+        break
+    else 
+        done = msgbox('Your Target has been reached');
+        break
+    end
 end
 
     
